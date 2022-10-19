@@ -10,3 +10,8 @@ export const createPost = joi.object({
     .required(),
   text: joi.string(),
 });
+
+export const createPostsHashtags = joi.object({
+  postId: joi.number().greater(0).required(),
+  hashtagId: joi.number().greater(0).required(),
+});
