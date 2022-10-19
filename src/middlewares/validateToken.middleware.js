@@ -22,7 +22,7 @@ const validateToken = async (req, res, next) => {
   }
 
   const user = (
-    await db.query("SELECT * FROM users WHERE id=$1;", [session.user_id])
+    await db.query(`SELECT id, name, email, "imageUrl" FROM users WHERE id=$1;`, [session.userId])
   ).rows[0];
   if (!user) {
     res
