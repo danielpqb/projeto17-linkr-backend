@@ -1,6 +1,7 @@
 import * as userRepositories from "../repositories/users.repository.js";
 import * as postsRepositories from "../repositories/posts.repository.js";
 import * as hashtagsRepositories from "../repositories/hashtags.repository.js";
+import urlMetadata from "url-metadata";
 
 export async function createPost(req, res) {
   const { userId, link, text } = req.body;
@@ -30,8 +31,21 @@ export async function createPost(req, res) {
 
 export async function getPosts(req, res) {
   try {
-    const posts = await postsRepositories.getAllPosts();
-
+    const posts = await postsRepositories.getTimelinePosts();
+    for(let i=0; i<posts.rows.length; i++){
+      await urlMetadata(posts.rows[i].link).then(
+      function (metadata) {
+        posts.rows[i].metadata = {
+          image: metadata.image,
+          title: metadata.title,
+          description: metadata.description
+        }
+      },
+      function (error) {
+        res.status(502).send(error);
+        return;
+      });
+    }
     res.status(200).send(posts.rows);
     return;
   } catch (error) {
