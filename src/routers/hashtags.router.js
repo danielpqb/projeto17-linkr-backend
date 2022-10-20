@@ -12,14 +12,14 @@ const router = Router();
 
 router.post(
   "/create-hashtag",
-  validateToken,
+  //validateToken,
   validateSchema(schemas.createHashtag),
   createHashtag
 );
 
 router.get(
   "/hashtags",
-  validateToken,
+  //validateToken,
   getHashtags);
 
 export default router;
