@@ -4,6 +4,7 @@ import { validateToken } from "../middlewares/validateToken.middleware.js";
 import {
   createPost,
   getPosts,
+  getAllPosts,
   createPostsHashtags,
 } from "../controllers/posts.controller.js";
 
@@ -18,6 +19,7 @@ router.post(
   createPost
 );
 router.get("/posts", validateToken, getPosts);
+router.get("/all-posts", validateToken, getAllPosts);
 router.post(
   "/create-posts-hashtags",
   validateToken,
