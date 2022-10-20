@@ -20,6 +20,7 @@ export async function createPost(req, res) {
     }
 
     await postsRepositories.createPost({ userId, link });
+
     res.status(201).send({ message: "Post created." });
     return;
   } catch (error) {
