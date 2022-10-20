@@ -56,9 +56,13 @@ async function postSignInUser(req, res) {
 }
 
 async function getUsersWithFilter(req, res){
+  if (!req.headers.filter){
+    res.sendStatus(400);
+    return;
+  }
 
   try {
-    const filter = stripHtml(req.body.filter).result;
+    const filter = stripHtml(req.headers.filter).result;
     const users = await repositories.getUsersWithFilter(filter);
     res.send(users.rows);
   } catch (error) {

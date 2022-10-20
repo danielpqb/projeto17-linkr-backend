@@ -24,7 +24,7 @@ async function createSession(userId, token) {
 
 async function getUsersWithFilter(filter) {
   return db.query(
-    `SELECT * FROM users WHERE name ILIKE $1;`,
+    `SELECT id, name, "imageUrl" FROM users WHERE name ILIKE $1;`,
     [filter+'%']
   );
 }
