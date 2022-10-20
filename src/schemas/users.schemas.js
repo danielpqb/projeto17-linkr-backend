@@ -4,7 +4,6 @@ const postSignUpUser = joi.object({
   name: joi.string().required(),
   email: joi.string().email().required(),
   password: joi.string().required(),
-  confirmPassword: joi.ref("password"),
   imageUrl: joi
     .string()
     .pattern(
@@ -18,4 +17,8 @@ const postSignInUser = joi.object({
   password: joi.string().required(),
 });
 
-export { postSignUpUser, postSignInUser };
+const searchUser = joi.object({
+  filter: joi.string().min(0)
+})
+
+export { postSignUpUser, postSignInUser , searchUser};
