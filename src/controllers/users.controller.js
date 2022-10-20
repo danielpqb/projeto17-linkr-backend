@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
+import { stripHtml } from 'string-strip-html';
 
 import * as repositories from "../repositories/users.repository.js";
 
@@ -54,4 +55,19 @@ async function postSignInUser(req, res) {
   }
 }
 
-export { postSignUpUser, postSignInUser };
+async function getUsersWithFilter(req, res){
+  if (!req.headers.filter){
+    res.sendStatus(400);
+    return;
+  }
+
+  try {
+    const filter = stripHtml(req.headers.filter).result;
+    const users = await repositories.getUsersWithFilter(filter);
+    res.send(users.rows);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+}
+
+export { postSignUpUser, postSignInUser, getUsersWithFilter };

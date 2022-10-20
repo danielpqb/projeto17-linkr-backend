@@ -17,4 +17,8 @@ const postSignInUser = joi.object({
   password: joi.string().required(),
 });
 
-export { postSignUpUser, postSignInUser };
+const searchUser = joi.object({
+  filter: joi.string().min(0)
+})
+
+export { postSignUpUser, postSignInUser , searchUser};

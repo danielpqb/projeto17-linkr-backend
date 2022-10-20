@@ -22,4 +22,11 @@ async function createSession(userId, token) {
   ]);
 }
 
-export { getUserByEmail, createUser, createSession, getUserById };
+async function getUsersWithFilter(filter) {
+  return db.query(
+    `SELECT id, name, "imageUrl" FROM users WHERE name ILIKE $1;`,
+    [filter+'%']
+  );
+}
+
+export { getUserByEmail, createUser, createSession, getUserById, getUsersWithFilter };
