@@ -12,8 +12,8 @@ export async function getPostById(id) {
   return db.query(`SELECT * FROM posts WHERE ID = $1;`, [id]);
 }
 
-export async function getAllPosts() {
-  return db.query(`SELECT * FROM posts;`);
+export async function getTimelinePosts() {
+  return db.query(`SELECT * FROM posts ORDER BY id DESC LIMIT 20;`);
 }
 
 export async function createPostsHashtags({ postId, hashtagId }) {
