@@ -16,7 +16,12 @@ export async function createHashtag(req, res) {
     const checkHashtag = await hashtagsRepositories.getHashtagByTitle(title);
 
     if (checkHashtag.rowCount > 0) {
-      res.status(409).send({ message: "Hashtag already exists!" });
+      res
+        .status(409)
+        .send({
+          message: "Hashtag already exists!",
+          hashtagId: checkHashtag.rows[0].id,
+        });
       return;
     }
 
@@ -31,7 +36,6 @@ export async function createHashtag(req, res) {
 }
 
 export async function getHashtags(req, res) {
-  
   try {
     const hashtags = await hashtagsRepositories.getAllHashtags();
 

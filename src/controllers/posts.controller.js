@@ -21,6 +21,7 @@ export async function createPost(req, res) {
     }
 
     await postsRepositories.createPost({ userId, link });
+
     res.status(201).send({ message: "Post created." });
     return;
   } catch (error) {
@@ -32,25 +33,38 @@ export async function createPost(req, res) {
 export async function getPosts(req, res) {
   try {
     const posts = await postsRepositories.getTimelinePosts();
-    for(let i=0; i<posts.rows.length; i++){
+    for (let i = 0; i < posts.rows.length; i++) {
       await urlMetadata(posts.rows[i].link).then(
-        function (metadata) { 
+        function (metadata) {
           posts.rows[i].metadata = {
             image: metadata.image,
             title: metadata.title,
-            description: metadata.description
-          }
+            description: metadata.description,
+          };
         },
         function (error) {
-          console.log(error, 'lib url-metadata');
-        })
+          console.log(error, "lib url-metadata");
+        }
+      );
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         name: user.rows[0].name,
-        image: user.rows[0].imageUrl 
+        image: user.rows[0].imageUrl,
       };
     }
     return res.status(200).send(posts.rows);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+    return;
+  }
+}
+
+export async function getAllPosts(req, res) {
+  try {
+    const posts = await postsRepositories.getAllPosts();
+
+    res.status(200).send(posts.rows);
+    return;
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
