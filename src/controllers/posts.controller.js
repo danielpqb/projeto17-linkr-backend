@@ -34,20 +34,23 @@ export async function getPosts(req, res) {
     const posts = await postsRepositories.getTimelinePosts();
     for(let i=0; i<posts.rows.length; i++){
       await urlMetadata(posts.rows[i].link).then(
-      function (metadata) {
-        posts.rows[i].metadata = {
-          image: metadata.image,
-          title: metadata.title,
-          description: metadata.description
-        }
-      },
-      function (error) {
-        res.status(502).send(error);
-        return;
-      });
+        function (metadata) { 
+          posts.rows[i].metadata = {
+            image: metadata.image,
+            title: metadata.title,
+            description: metadata.description
+          }
+        },
+        function (error) {
+          console.log(error, 'lib url-metadata');
+        })
+      const user = await userRepositories.getUserById(posts.rows[i].userId);
+      posts.rows[i].user = {
+        name: user.rows[0].name,
+        image: user.rows[0].imageUrl 
+      };
     }
-    res.status(200).send(posts.rows);
-    return;
+    return res.status(200).send(posts.rows);
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
