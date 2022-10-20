@@ -6,12 +6,12 @@ export async function createHashtag(req, res) {
   const { title } = req.body;
 
   try {
-    const checkUser = await userRepositories.getUserById(user.id);
+    /*const checkUser = await userRepositories.getUserById(user.id);
 
     if (checkUser.rowCount === 0) {
       res.status(400).send({ message: "User doesn't exist!" });
       return;
-    }
+    }*/
 
     const checkHashtag = await hashtagsRepositories.getHashtagByTitle(title);
 

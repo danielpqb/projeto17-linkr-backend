@@ -14,15 +14,23 @@ const router = Router();
 
 router.post(
   "/create-post",
-  validateToken,
+  //validateToken,
   validateSchema(schemas.createPost),
   createPost
 );
-router.get("/posts", validateToken, getPosts);
-router.get("/all-posts", validateToken, getAllPosts);
+router.get(
+  "/posts",
+  //validateToken,
+  getPosts
+);
+router.get(
+  "/all-posts",
+  //validateToken,
+  getAllPosts
+);
 router.post(
   "/create-posts-hashtags",
-  validateToken,
+  //validateToken,
   validateSchema(schemas.createPostsHashtags),
   createPostsHashtags
 );
