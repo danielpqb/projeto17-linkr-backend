@@ -1,11 +1,13 @@
 import db from "../database/database.js";
 
 export async function createPost({ userId, link, text }) {
-  db.query(`INSERT INTO posts("userId", link, text) VALUES ($1, $2, $3);`, [
-    userId,
-    link,
-    text,
-  ]);
+  const id = (
+    await db.query(
+      `INSERT INTO posts("userId", link, text) VALUES ($1, $2, $3) RETURNING id;`,
+      [userId, link, text]
+    )
+  ).rows[0].id;
+  return id;
 }
 
 export async function getPostById(id) {

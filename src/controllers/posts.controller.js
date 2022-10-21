@@ -14,15 +14,16 @@ export async function createPost(req, res) {
       return;
     }
 
+    let postId;
     if (text) {
-      await postsRepositories.createPost({ userId, link, text });
-      res.status(201).send({ message: "Post created." });
+      postId = await postsRepositories.createPost({ userId, link, text });
+      res.status(201).send({ message: "Post created.", id: postId });
       return;
     }
 
-    await postsRepositories.createPost({ userId, link });
+    postId = await postsRepositories.createPost({ userId, link });
 
-    res.status(201).send({ message: "Post created." });
+    res.status(201).send({ message: "Post created.", id: postId });
     return;
   } catch (error) {
     res.status(500).send({ error: error.message });
@@ -43,11 +44,11 @@ export async function getPosts(req, res) {
           };
         },
         function (error) {
-          console.log(error, "lib url-metadata");
           posts.rows[i].metadata = {
-            image: 'https://ps.w.org/broken-link-checker/assets/icon-256x256.png',
-            title: 'Erro 400',
-            description: 'Erro na renderização do link',
+            image:
+              "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
+            title: "Erro 400",
+            description: "Erro na renderização do link",
           };
         }
       );

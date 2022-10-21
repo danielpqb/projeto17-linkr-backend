@@ -6,12 +6,12 @@ export async function createHashtag(req, res) {
   const { title } = req.body;
 
   try {
-    /*const checkUser = await userRepositories.getUserById(user.id);
+    const checkUser = await userRepositories.getUserById(user.id);
 
     if (checkUser.rowCount === 0) {
       res.status(400).send({ message: "User doesn't exist!" });
       return;
-    }*/
+    }
 
     const checkHashtag = await hashtagsRepositories.getHashtagByTitle(title);
 
@@ -25,9 +25,9 @@ export async function createHashtag(req, res) {
       return;
     }
 
-    await hashtagsRepositories.createHashtag(title);
+    const hashtagId = await hashtagsRepositories.createHashtag(title);
 
-    res.status(201).send({ message: "Hashtag created." });
+    res.status(201).send({ message: "Hashtag created.", id: hashtagId });
     return;
   } catch (error) {
     res.status(500).send({ error: error.message });
