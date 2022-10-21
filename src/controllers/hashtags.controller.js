@@ -4,7 +4,7 @@ import * as hashtagsRepositories from "../repositories/hashtags.repository.js";
 export async function createHashtag(req, res) {
   const { user } = res.locals;
   const { title } = req.body;
-
+  console.log(title)
   try {
     /*const checkUser = await userRepositories.getUserById(user.id);
 
@@ -25,9 +25,9 @@ export async function createHashtag(req, res) {
       return;
     }
 
-    await hashtagsRepositories.createHashtag(title);
+    const hashtagId = await hashtagsRepositories.createHashtag(title);
 
-    res.status(201).send({ message: "Hashtag created." });
+    res.status(201).send({ message: "Hashtag created.", id: hashtagId });
     return;
   } catch (error) {
     res.status(500).send({ error: error.message });
