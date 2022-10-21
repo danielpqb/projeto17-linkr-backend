@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { v4 as uuid } from "uuid";
-import { stripHtml } from 'string-strip-html';
+import { stripHtml } from "string-strip-html";
 
 import * as repositories from "../repositories/users.repository.js";
 
@@ -55,8 +55,21 @@ async function postSignInUser(req, res) {
   }
 }
 
-async function getUsersWithFilter(req, res){
-  if (!req.headers.filter){
+async function getUserDataByToken(req, res) {
+  const { user } = res.locals;
+
+  res.status(200).send({
+    message: `Welcome back, ${user.name}.`,
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    imageUrl: user.imageUrl,
+  });
+  return;
+}
+
+async function getUsersWithFilter(req, res) {
+  if (!req.headers.filter) {
     res.sendStatus(400);
     return;
   }
@@ -70,4 +83,9 @@ async function getUsersWithFilter(req, res){
   }
 }
 
-export { postSignUpUser, postSignInUser, getUsersWithFilter };
+export {
+  postSignUpUser,
+  postSignInUser,
+  getUserDataByToken,
+  getUsersWithFilter,
+};
