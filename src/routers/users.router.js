@@ -22,7 +22,7 @@ router.get("/users/me", validateToken, getUserDataByToken);
 
 router.get(
   "/searchUsers",
-  //validateToken,
+  validateToken,
   validateSchema(schemas.searchUser),
   getUsersWithFilter
 );

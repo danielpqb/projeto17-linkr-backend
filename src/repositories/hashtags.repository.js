@@ -1,7 +1,11 @@
 import db from "../database/database.js";
 
 export async function createHashtag(title) {
-  const id = (await db.query(`INSERT INTO hashtags (title) VALUES ($1) RETURNING id;`, [title])).rows[0].id;
+  const id = (
+    await db.query(`INSERT INTO hashtags (title) VALUES ($1) RETURNING id;`, [
+      title,
+    ])
+  ).rows[0].id;
   return id;
 }
 
