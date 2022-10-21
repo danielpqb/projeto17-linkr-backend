@@ -1,40 +1,57 @@
-import * as likesRepositories from '../repositories/likes.repository.js';
+import likesRepository from '../repositories/likes.repository.js';
 
-async function getPostLikes(req, res) {}
+export async function fetchLikes(req, res) {
+  const postId = req.params.postId;
+  const userId = req?.query.userId;
 
-async function likePost(req, res) {
-  const { userId, postId } = req.body;
-  console.log(userId, postId);
-  console.log(await likesRepositories.userHasLiked(userId, postId));
+  try {
+    const likes = await likesRepository.fetchLikes(postId, userId);
 
-  if (!(await likesRepositories.userHasLiked(userId, postId))) {
-    try {
-      await likesRepositories.likePost(userId, postId);
-      return res.sendStatus(201);
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
-    }
-  } else {
-    console.log('nothing happened');
-    return res.sendStatus(200);
+    res.status(200).send(likes.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Couldn't fetch likes! ");
   }
 }
 
-async function unlikePost(req, res) {
-  const { userId, postId } = req.body;
-  if (await likesRepositories.userHasLiked(userId, postId)) {
-    try {
-      await likesRepositories.unlikePost(userId, postId);
-      return res.sendStatus(201);
-    } catch (error) {
-      console.log(error);
-      return res.sendStatus(500);
-    }
-  } else {
-    console.log('nothing happened');
-    return res.sendStatus(200);
+export async function fetchWhoLiked(req, res) {
+  const { postId } = req.params;
+  const { userId } = req.params;
+
+  try {
+    const whoLiked = await likesRepository.fetchWhoElseLiked(postId, userId);
+
+    res.status(200).send(whoLiked.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Couldn't fetch who liked! ");
   }
 }
 
-export { likePost, unlikePost };
+export async function likePost(req, res) {
+  const { postId } = req.params;
+  const { userId } = req.params;
+
+  try {
+    await likesRepository.likePost(postId, userId);
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Couldn't like post!");
+  }
+}
+
+export async function unlikePost(req, res) {
+  const { postId } = req.params;
+  const { userId } = req.params;
+
+  try {
+    await likesRepository.unlikePost(postId, userId);
+
+    res.sendStatus(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Couldn't remove like from post!");
+  }
+}

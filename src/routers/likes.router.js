@@ -1,10 +1,17 @@
 import { Router } from 'express';
-import { likePost, unlikePost } from '../controllers/likes.controller.js';
+
+import {
+  fetchLikes,
+  fetchWhoLiked,
+  likePost,
+  unlikePost,
+} from '../controllers/likes.controller.js';
 
 const likesRouter = Router();
 
-likesRouter.get('/likes/:postId');
-likesRouter.post('/likes', likePost);
-likesRouter.delete('/likes', unlikePost);
+likesRouter.get('/likes/:postId', fetchLikes);
+likesRouter.get('/likes/who/:postId/:userId', fetchWhoLiked);
+likesRouter.post('/likes/:postId/:userId', likePost);
+likesRouter.delete('/likes/:postId/:userId', unlikePost);
 
 export default likesRouter;

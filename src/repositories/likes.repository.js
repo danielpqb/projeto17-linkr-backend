@@ -1,35 +1,51 @@
 import connection from '../database/database.js';
 
-async function getLikes(postId) {
-  const response = await connection.query(
-    `SELECT * FROM likes WHERE "postId" = $1`,
-    [postId]
-  );
+const likesRepository = {
+  fetchLikes: async (postId, userId = '') => {
+    const query =
+      userId === ''
+        ? `SELECT COUNT(*) AS likes
+        FROM likes 
+        WHERE "postId" = $1`
+        : `SELECT COUNT(*) AS likes
+        FROM likes
+        WHERE "postId" = $1 AND "userId" = $2`;
+    const values = userId === '' ? [postId] : [postId, userId];
 
-  return response.rows;
-}
+    return connection.query(query, values);
+  },
 
-async function likePost(userId, postId) {
-  return connection.query(
-    `INSERT INTO likes ("userId", "postId") VALUES ($1, $2)`,
-    [userId, postId]
-  );
-}
+  fetchWhoElseLiked: async (postId, userId) => {
+    const query = `SELECT u.name
+      FROM likes l
+      JOIN users u 
+        ON u.id = l."userId"
+      JOIN posts p 
+        ON p.id = l."postId"
+      WHERE p.id = $1 AND l."userId" != $2
+      LIMIT 2;`;
+    const values = [postId, userId];
 
-async function unlikePost(userId, postId) {
-  return connection.query(
-    `DELETE FROM likes WHERE "userId" = $1 AND "postId" = $2`,
-    [userId, postId]
-  );
-}
+    return connection.query(query, values);
+  },
 
-async function userHasLiked(userId, postId) {
-  const response = await connection.query(
-    `SELECT * FROM likes WHERE "userId" = $1 AND "postId"= $2`,
-    [userId, postId]
-  );
+  likePost: async (postId, userId) => {
+    const query = `INSERT INTO likes ("postId", "userId")
+      VALUES ($1, $2)
+    `;
+    const values = [postId, userId];
 
-  return response.rowCount > 0 ? true : false;
-}
+    return connection.query(query, values);
+  },
 
-export { getLikes, likePost, unlikePost, userHasLiked };
+  unlikePost: async (postId, userId) => {
+    const query = `DELETE FROM likes
+      WHERE "postId" = $1 AND "userId" = $2
+    `;
+    const values = [postId, userId];
+
+    return connection.query(query, values);
+  },
+};
+
+export default likesRepository;
