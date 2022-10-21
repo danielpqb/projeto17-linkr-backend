@@ -44,6 +44,11 @@ export async function getPosts(req, res) {
         },
         function (error) {
           console.log(error, "lib url-metadata");
+          posts.rows[i].metadata = {
+            image: 'https://ps.w.org/broken-link-checker/assets/icon-256x256.png',
+            title: 'Erro 400',
+            description: 'Erro na renderização do link',
+          };
         }
       );
       const user = await userRepositories.getUserById(posts.rows[i].userId);
