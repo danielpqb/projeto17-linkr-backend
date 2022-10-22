@@ -54,6 +54,7 @@ export async function getPosts(req, res) {
       );
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
+        id: user.rows[0].id,
         name: user.rows[0].name,
         image: user.rows[0].imageUrl,
       };
