@@ -59,7 +59,7 @@ export async function getPosts(req, res) {
         image: user.rows[0].imageUrl,
       };
     }
-    return res.status(200).send(posts.rows);
+    return res.status(200).send([posts.rows]);
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
