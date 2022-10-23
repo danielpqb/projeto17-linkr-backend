@@ -6,6 +6,7 @@ import {
   getPosts,
   getAllPosts,
   createPostsHashtags,
+  getHashtagPosts,
 } from "../controllers/posts.controller.js";
 
 import * as schemas from "../schemas/posts.schemas.js";
@@ -27,6 +28,11 @@ router.get(
   "/all-posts",
   validateToken,
   getAllPosts
+);
+router.get(
+  "/posts/hashtag/:hashtag",
+  validateToken,
+  getHashtagPosts
 );
 router.post(
   "/create-posts-hashtags",
