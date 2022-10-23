@@ -1,16 +1,16 @@
-import connection from '../database/database.js';
+import connection from "../database/database.js";
 
 const likesRepository = {
-  fetchLikes: async (postId, userId = '') => {
+  fetchLikes: async (postId, userId = "") => {
     const query =
-      userId === ''
+      userId === ""
         ? `SELECT COUNT(*) AS likes
         FROM likes 
         WHERE "postId" = $1`
         : `SELECT COUNT(*) AS likes
         FROM likes
         WHERE "postId" = $1 AND "userId" = $2`;
-    const values = userId === '' ? [postId] : [postId, userId];
+    const values = userId === "" ? [postId] : [postId, userId];
 
     return connection.query(query, values);
   },
@@ -43,6 +43,13 @@ const likesRepository = {
       WHERE "postId" = $1 AND "userId" = $2
     `;
     const values = [postId, userId];
+
+    return connection.query(query, values);
+  },
+
+  deleteLikes: async (postId) => {
+    const query = `DELETE FROM likes WHERE "postId" = $1`;
+    const values = [postId];
 
     return connection.query(query, values);
   },

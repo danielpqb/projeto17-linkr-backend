@@ -1,6 +1,7 @@
 import * as userRepositories from "../repositories/users.repository.js";
 import * as postsRepositories from "../repositories/posts.repository.js";
 import * as hashtagsRepositories from "../repositories/hashtags.repository.js";
+import likesRepository from "../repositories/likes.repository.js";
 import urlMetadata from "url-metadata";
 
 export async function createPost(req, res) {
@@ -138,5 +139,18 @@ export async function getHashtagPosts(req, res) {
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
+  }
+}
+
+export async function deletePost(req, res) {
+  const { postId } = req.params;
+
+  try {
+    await likesRepository.deleteLikes(postId);
+    await postsRepositories.deletePost(postId);
+    return res.status(204).send({ message: "post deleted" });
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
   }
 }
