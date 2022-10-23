@@ -38,3 +38,12 @@ export async function createPostsHashtags({ postId, hashtagId }) {
     [postId, hashtagId]
   );
 }
+
+export async function updatePostText(postId, text){
+  db.query(
+    `UPDATE posts 
+      SET text=$1
+      WHERE id=$2;`,
+    [text, postId]
+  )
+}

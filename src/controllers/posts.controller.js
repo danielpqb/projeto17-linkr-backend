@@ -1,6 +1,7 @@
 import * as userRepositories from "../repositories/users.repository.js";
 import * as postsRepositories from "../repositories/posts.repository.js";
 import * as hashtagsRepositories from "../repositories/hashtags.repository.js";
+import { stripHtml } from 'string-strip-html'
 import urlMetadata from "url-metadata";
 
 export async function createPost(req, res) {
@@ -139,4 +140,41 @@ export async function getHashtagPosts(req, res) {
     res.status(500).send({ error: error.message });
     return;
   }
+}
+
+export async function updateUserPost(req, res) {
+  let { text } = req.body;
+  const postId = Number(req.params.id);
+  const userId = Number(res.locals.user.id);
+
+  try {
+    const post = await postsRepositories.getPostById(postId);
+    if(post.rows.length === 0){
+      res.status(404).send({message: 'Post não encontrado'});
+      return
+    }
+
+    if(post.rows[0].userId !== userId){
+      res.status(401).send({message: 'Usuário não autorizado'});
+      return
+    };
+
+    if (text){
+      text = stripHtml(text).result;
+    } else {
+      text = '';
+    };
+  } catch (error) {
+    console.log(error)
+    res.sendStatus(500);
+    return
+  }
+
+  try {
+    await postsRepositories.updatePostText(postId, text);
+    res.sendStatus(204);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  };
 }

@@ -7,6 +7,7 @@ import {
   getAllPosts,
   createPostsHashtags,
   getHashtagPosts,
+  updateUserPost,
 } from "../controllers/posts.controller.js";
 
 import * as schemas from "../schemas/posts.schemas.js";
@@ -40,5 +41,11 @@ router.post(
   validateSchema(schemas.createPostsHashtags),
   createPostsHashtags
 );
+router.put(
+  "/posts/:id",
+  validateToken,
+  validateSchema(schemas.updatePost),
+  updateUserPost
+)
 
 export default router;
