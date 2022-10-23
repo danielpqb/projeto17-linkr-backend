@@ -46,3 +46,17 @@ export async function getHashtags(req, res) {
     return;
   }
 }
+
+export async function getTrendingHashtags(req, res) {
+  try {
+    const hashtags = await hashtagsRepositories.getRankingHashtags();
+    for (let i = 0; i < hashtags.rows.length; i++) {
+      hashtags.rows[i]=hashtags.rows[i].title;
+    }
+    res.status(200).send([hashtags.rows]);
+    return;
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+    return;
+  }
+}
