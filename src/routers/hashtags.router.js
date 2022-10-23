@@ -4,6 +4,7 @@ import { validateToken } from "../middlewares/validateToken.middleware.js";
 import {
   createHashtag,
   getHashtags,
+  getTrendingHashtags,
 } from "../controllers/hashtags.controller.js";
 
 import * as schemas from "../schemas/hashtags.schemas.js";
@@ -20,6 +21,13 @@ router.post(
 router.get(
   "/hashtags",
   validateToken,
-  getHashtags);
+  getHashtags
+);
+
+router.get(
+  "/trending",
+  validateToken,
+  getTrendingHashtags
+);
 
 export default router;

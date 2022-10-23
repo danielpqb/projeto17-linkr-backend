@@ -104,3 +104,39 @@ export async function createPostsHashtags(req, res) {
     return;
   }
 }
+
+export async function getHashtagPosts(req, res) {
+  try {
+    const hashtag = req.params.hashtag;
+    const posts = await postsRepositories.getHashtagFeedPosts(hashtag);
+    for (let i = 0; i < posts.rows.length; i++) {
+      await urlMetadata(posts.rows[i].link).then(
+        function (metadata) {
+          posts.rows[i].metadata = {
+            image: metadata.image,
+            title: metadata.title,
+            description: metadata.description,
+          };
+        },
+        function (error) {
+          posts.rows[i].metadata = {
+            image:
+              "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
+            title: "Erro 400",
+            description: "Erro na renderização do link",
+          };
+        }
+      );
+      const user = await userRepositories.getUserById(posts.rows[i].userId);
+      posts.rows[i].user = {
+        id: user.rows[0].id,
+        name: user.rows[0].name,
+        image: user.rows[0].imageUrl,
+      };
+    }
+    return res.status(200).send([posts.rows]);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+    return;
+  }
+}
