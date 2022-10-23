@@ -1,8 +1,10 @@
+import { stripHtml } from 'string-strip-html'
+import urlMetadata from "url-metadata";
+
 import * as userRepositories from "../repositories/users.repository.js";
 import * as postsRepositories from "../repositories/posts.repository.js";
 import * as hashtagsRepositories from "../repositories/hashtags.repository.js";
-import { stripHtml } from 'string-strip-html'
-import urlMetadata from "url-metadata";
+import likesRepository from "../repositories/likes.repository.js";
 
 export async function createPost(req, res) {
   const { userId, link, text } = req.body;
@@ -144,31 +146,13 @@ export async function getHashtagPosts(req, res) {
 
 export async function updateUserPost(req, res) {
   let { text } = req.body;
-  const postId = Number(req.params.id);
-  const userId = Number(res.locals.user.id);
+  const postId = res.locals.postId;
 
-  try {
-    const post = await postsRepositories.getPostById(postId);
-    if(post.rows.length === 0){
-      res.status(404).send({message: 'Post não encontrado'});
-      return
-    }
-
-    if(post.rows[0].userId !== userId){
-      res.status(401).send({message: 'Usuário não autorizado'});
-      return
-    };
-
-    if (text){
-      text = stripHtml(text).result;
-    } else {
-      text = '';
-    };
-  } catch (error) {
-    console.log(error)
-    res.sendStatus(500);
-    return
-  }
+  if (text){
+    text = stripHtml(text).result;
+  } else {
+    text = '';
+  };
 
   try {
     await postsRepositories.updatePostText(postId, text);
@@ -177,4 +161,43 @@ export async function updateUserPost(req, res) {
     console.log(error);
     res.sendStatus(500);
   };
+}
+
+export async function updatePostsHashtags(req, res) {
+  const { postId } = res.locals;
+  const hashtags = req.body;
+
+  try {
+    await postsRepositories.deletePostsHashtagsId(postId);
+
+    hashtags.forEach(async (hashtag) => {
+      const title = stripHtml(hashtag).result;
+      const checkHashtag = await hashtagsRepositories.getHashtagByTitle(title);
+      let hashtagId;
+      if (checkHashtag.rows.length === 0){
+        hashtagId = await hashtagsRepositories.createHashtag(title);
+      } else {
+        hashtagId = checkHashtag.rows[0].id;
+      };
+      await postsRepositories.createPostsHashtags({ postId, hashtagId });
+    });
+
+    res.sendStatus(204);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
+}
+
+export async function deletePost(req, res) {
+  const { postId } = req.params;
+
+  try {
+    await likesRepository.deleteLikes(postId);
+    await postsRepositories.deletePost(postId);
+    return res.status(204).send({ message: "post deleted" });
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  }
 }

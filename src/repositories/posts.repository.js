@@ -23,13 +23,16 @@ export async function getTimelinePosts() {
 }
 
 export async function getHashtagFeedPosts(hashtag) {
-  return db.query(`
+  return db.query(
+    `
   
   SELECT posts.id,posts."userId",posts.link,posts.text FROM "postsHashtags"
   JOIN posts ON posts.id = "postsHashtags"."postId"
   JOIN hashtags ON hashtags.id = "postsHashtags"."hashtagId"
   WHERE hashtags.title = ($1)
-  ORDER BY posts.id DESC LIMIT 20;`,[hashtag]);
+  ORDER BY posts.id DESC LIMIT 20;`,
+    [hashtag]
+  );
 }
 
 export async function createPostsHashtags({ postId, hashtagId }) {
@@ -45,5 +48,16 @@ export async function updatePostText(postId, text){
       SET text=$1
       WHERE id=$2;`,
     [text, postId]
-  )
+  );
+}
+
+export async function deletePostsHashtagsId(postId){
+  db.query(
+    `DELETE FROM "postsHashtags" WHERE "postId" = $1;`,
+    [postId]
+  );
+}
+
+export async function deletePost(postId) {
+  return db.query(`DELETE FROM posts WHERE id = $1`, [postId]);
 }
