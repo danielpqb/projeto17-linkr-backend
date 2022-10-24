@@ -194,6 +194,7 @@ export async function deletePost(req, res) {
 
   try {
     await likesRepository.deleteLikes(postId);
+    await postsRepositories.deletePostsHashtagsId(postId);
     await postsRepositories.deletePost(postId);
     return res.status(204).send({ message: "post deleted" });
   } catch (error) {
