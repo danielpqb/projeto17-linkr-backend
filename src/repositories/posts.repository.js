@@ -11,7 +11,7 @@ export async function createPost({ userId, link, text }) {
 }
 
 export async function getPostById(id) {
-  return db.query(`SELECT * FROM posts WHERE ID = $1;`, [id]);
+  return db.query(`SELECT * FROM posts WHERE id = $1;`, [id]);
 }
 
 export async function getAllPosts() {

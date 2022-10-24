@@ -69,6 +69,7 @@ async function getUserDataByToken(req, res) {
 }
 
 async function getUsersWithFilter(req, res) {
+  console.log(req.headers);
   if (!req.headers.filter) {
     res.sendStatus(400);
     return;
@@ -77,6 +78,7 @@ async function getUsersWithFilter(req, res) {
   try {
     const filter = stripHtml(req.headers.filter).result;
     const users = await repositories.getUsersWithFilter(filter);
+    console.log(filter);
     res.send(users.rows);
   } catch (error) {
     res.sendStatus(500);
