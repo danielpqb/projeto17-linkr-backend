@@ -1,4 +1,4 @@
-import { stripHtml } from 'string-strip-html'
+import { stripHtml } from "string-strip-html";
 import urlMetadata from "url-metadata";
 
 import * as userRepositories from "../repositories/users.repository.js";
@@ -148,11 +148,11 @@ export async function updateUserPost(req, res) {
   let { text } = req.body;
   const postId = res.locals.postId;
 
-  if (text){
+  if (text) {
     text = stripHtml(text).result;
   } else {
-    text = '';
-  };
+    text = "";
+  }
 
   try {
     await postsRepositories.updatePostText(postId, text);
@@ -160,7 +160,7 @@ export async function updateUserPost(req, res) {
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
-  };
+  }
 }
 
 export async function updatePostsHashtags(req, res) {
@@ -174,11 +174,11 @@ export async function updatePostsHashtags(req, res) {
       const title = stripHtml(hashtag).result;
       const checkHashtag = await hashtagsRepositories.getHashtagByTitle(title);
       let hashtagId;
-      if (checkHashtag.rows.length === 0){
+      if (checkHashtag.rows.length === 0) {
         hashtagId = await hashtagsRepositories.createHashtag(title);
       } else {
         hashtagId = checkHashtag.rows[0].id;
-      };
+      }
       await postsRepositories.createPostsHashtags({ postId, hashtagId });
     });
 
@@ -199,5 +199,41 @@ export async function deletePost(req, res) {
   } catch (error) {
     console.log(error);
     res.sendStatus(500);
+  }
+}
+
+export async function getUserPosts(req, res) {
+  const userId = req.params.userId;
+  try {
+    const posts = await postsRepositories.getPostsByUserId(userId);
+    for (let i = 0; i < posts.rows.length; i++) {
+      await urlMetadata(posts.rows[i].link).then(
+        function (metadata) {
+          posts.rows[i].metadata = {
+            image: metadata.image,
+            title: metadata.title,
+            description: metadata.description,
+          };
+        },
+        function (error) {
+          posts.rows[i].metadata = {
+            image:
+              "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
+            title: "Erro 400",
+            description: "Erro na renderização do link",
+          };
+        }
+      );
+      const user = await userRepositories.getUserById(posts.rows[i].userId);
+      posts.rows[i].user = {
+        id: user.rows[0].id,
+        name: user.rows[0].name,
+        image: user.rows[0].imageUrl,
+      };
+    }
+    return res.status(200).send([posts.rows]);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+    return;
   }
 }

@@ -11,6 +11,7 @@ import {
   updateUserPost,
   updatePostsHashtags,
   deletePost,
+  getUserPosts,
 } from "../controllers/posts.controller.js";
 
 import * as schemas from "../schemas/posts.schemas.js";
@@ -26,6 +27,8 @@ router.post(
 router.get("/posts", validateToken, getPosts);
 router.get("/all-posts", validateToken, getAllPosts);
 router.get("/posts/hashtag/:hashtag", validateToken, getHashtagPosts);
+router.get("/posts/:userId", getUserPosts);
+
 router.post(
   "/create-posts-hashtags",
   validateToken,
@@ -44,7 +47,7 @@ router.put(
   validateToken,
   validateUserPropertyPost,
   updatePostsHashtags
-)
+);
 
 router.delete("/post/delete/:postId", validateToken, deletePost);
 
