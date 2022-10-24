@@ -15,3 +15,7 @@ export const createPostsHashtags = joi.object({
   postId: joi.number().greater(0).required(),
   hashtagId: joi.number().greater(0).required(),
 });
+
+export const updatePost = joi.object({
+  text: joi.string().min(0)
+})

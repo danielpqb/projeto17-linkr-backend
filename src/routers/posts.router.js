@@ -1,12 +1,15 @@
 import { Router } from "express";
 import { validateSchema } from "../middlewares/validateSchema.middleware.js";
 import { validateToken } from "../middlewares/validateToken.middleware.js";
+import { validateUserPropertyPost } from "../middlewares/validateUserPropertyPost.js";
 import {
   createPost,
   getPosts,
   getAllPosts,
   createPostsHashtags,
   getHashtagPosts,
+  updateUserPost,
+  updatePostsHashtags,
   deletePost,
 } from "../controllers/posts.controller.js";
 
@@ -29,6 +32,19 @@ router.post(
   validateSchema(schemas.createPostsHashtags),
   createPostsHashtags
 );
+router.put(
+  "/posts/:id",
+  validateToken,
+  validateSchema(schemas.updatePost),
+  validateUserPropertyPost,
+  updateUserPost
+);
+router.put(
+  "/posts/:id/hashtags",
+  validateToken,
+  validateUserPropertyPost,
+  updatePostsHashtags
+)
 
 router.delete("/post/delete/:postId", validateToken, deletePost);
 

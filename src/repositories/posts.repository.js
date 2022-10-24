@@ -42,6 +42,22 @@ export async function createPostsHashtags({ postId, hashtagId }) {
   );
 }
 
+export async function updatePostText(postId, text){
+  db.query(
+    `UPDATE posts 
+      SET text=$1
+      WHERE id=$2;`,
+    [text, postId]
+  );
+}
+
+export async function deletePostsHashtagsId(postId){
+  db.query(
+    `DELETE FROM "postsHashtags" WHERE "postId" = $1;`,
+    [postId]
+  );
+}
+
 export async function deletePost(postId) {
   return db.query(`DELETE FROM posts WHERE id = $1`, [postId]);
 }

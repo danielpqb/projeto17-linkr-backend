@@ -1,8 +1,10 @@
+import { stripHtml } from 'string-strip-html'
+import urlMetadata from "url-metadata";
+
 import * as userRepositories from "../repositories/users.repository.js";
 import * as postsRepositories from "../repositories/posts.repository.js";
 import * as hashtagsRepositories from "../repositories/hashtags.repository.js";
 import likesRepository from "../repositories/likes.repository.js";
-import urlMetadata from "url-metadata";
 
 export async function createPost(req, res) {
   const { userId, link, text } = req.body;
@@ -139,6 +141,51 @@ export async function getHashtagPosts(req, res) {
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
+  }
+}
+
+export async function updateUserPost(req, res) {
+  let { text } = req.body;
+  const postId = res.locals.postId;
+
+  if (text){
+    text = stripHtml(text).result;
+  } else {
+    text = '';
+  };
+
+  try {
+    await postsRepositories.updatePostText(postId, text);
+    res.sendStatus(204);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
+  };
+}
+
+export async function updatePostsHashtags(req, res) {
+  const { postId } = res.locals;
+  const hashtags = req.body;
+
+  try {
+    await postsRepositories.deletePostsHashtagsId(postId);
+
+    hashtags.forEach(async (hashtag) => {
+      const title = stripHtml(hashtag).result;
+      const checkHashtag = await hashtagsRepositories.getHashtagByTitle(title);
+      let hashtagId;
+      if (checkHashtag.rows.length === 0){
+        hashtagId = await hashtagsRepositories.createHashtag(title);
+      } else {
+        hashtagId = checkHashtag.rows[0].id;
+      };
+      await postsRepositories.createPostsHashtags({ postId, hashtagId });
+    });
+
+    res.sendStatus(204);
+  } catch (error) {
+    console.log(error);
+    res.sendStatus(500);
   }
 }
 
