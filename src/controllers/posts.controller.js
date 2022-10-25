@@ -236,19 +236,20 @@ export async function getUserPosts(req, res) {
 
 export async function getPostDataById(req, res) {
   const { id } = req.params;
-  console.log(id);
 
   try {
     const post = await postsRepositories.getPostById(id);
-    console.log(post);
     if (post.rowCount <= 0) {
       res.status(404).send({ message: "Post could not be found." });
       return;
     }
 
+    const user = await userRepositories.getUserById(post.rows[0].userId);
+
     res.status(200).send({
       message: `Post data found.`,
       postData: post.rows[0],
+      user: user.rows[0]
     });
     return;
   } catch (error) {
