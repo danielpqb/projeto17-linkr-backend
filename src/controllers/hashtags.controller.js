@@ -16,12 +16,10 @@ export async function createHashtag(req, res) {
     const checkHashtag = await hashtagsRepositories.getHashtagByTitle(title);
 
     if (checkHashtag.rowCount > 0) {
-      res
-        .status(409)
-        .send({
-          message: "Hashtag already exists!",
-          hashtagId: checkHashtag.rows[0].id,
-        });
+      res.status(409).send({
+        message: "Hashtag already exists!",
+        hashtagId: checkHashtag.rows[0].id,
+      });
       return;
     }
 
@@ -51,7 +49,7 @@ export async function getTrendingHashtags(req, res) {
   try {
     const hashtags = await hashtagsRepositories.getRankingHashtags();
     for (let i = 0; i < hashtags.rows.length; i++) {
-      hashtags.rows[i]=hashtags.rows[i].title;
+      hashtags.rows[i] = hashtags.rows[i].title;
     }
     res.status(200).send([hashtags.rows]);
     return;

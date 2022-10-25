@@ -4,12 +4,10 @@ const validateSchema = (schema) => {
 
     if (validation.error) {
       const errors = validation.error.details.map((v) => v);
-      res
-        .status(422)
-        .send({
-          message: "Joi patterns were not satisfied!",
-          joiErrors: errors,
-        });
+      res.status(422).send({
+        message: "Joi patterns were not satisfied!",
+        joiErrors: errors,
+      });
       return;
     }
 

@@ -20,11 +20,6 @@ router.post("/signin", validateSchema(schemas.postSignInUser), postSignInUser);
 
 router.get("/users/me", validateToken, getUserDataByToken);
 
-router.get(
-  "/searchUsers",
-  validateToken,
-  validateSchema(schemas.searchUser),
-  getUsersWithFilter
-);
+router.get("/searchUsers", validateToken, validateSchema(schemas.searchUser), getUsersWithFilter);
 
 export default router;

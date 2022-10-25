@@ -1,4 +1,4 @@
-import likesRepository from '../repositories/likes.repository.js';
+import likesRepository from "../repositories/likes.repository.js";
 
 export async function fetchLikes(req, res) {
   const postId = req.params.postId;

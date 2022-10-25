@@ -19,37 +19,16 @@ import * as schemas from "../schemas/posts.schemas.js";
 
 const router = Router();
 
-router.post(
-  "/create-post",
-  validateToken,
-  validateSchema(schemas.createPost),
-  createPost
-);
+router.post("/create-post", validateToken, validateSchema(schemas.createPost), createPost);
 router.get("/posts", validateToken, getPosts);
 router.get("/all-posts", validateToken, getAllPosts);
 router.get("/posts/hashtag/:hashtag", validateToken, getHashtagPosts);
 router.get("/posts/:userId", getUserPosts);
 router.get("/posts/post/:id", getPostDataById);
 
-router.post(
-  "/create-posts-hashtags",
-  validateToken,
-  validateSchema(schemas.createPostsHashtags),
-  createPostsHashtags
-);
-router.put(
-  "/posts/:id",
-  validateToken,
-  validateSchema(schemas.updatePost),
-  validateUserPropertyPost,
-  updateUserPost
-);
-router.put(
-  "/posts/:id/hashtags",
-  validateToken,
-  validateUserPropertyPost,
-  updatePostsHashtags
-);
+router.post("/create-posts-hashtags", validateToken, validateSchema(schemas.createPostsHashtags), createPostsHashtags);
+router.put("/posts/:id", validateToken, validateSchema(schemas.updatePost), validateUserPropertyPost, updateUserPost);
+router.put("/posts/:id/hashtags", validateToken, validateUserPropertyPost, updatePostsHashtags);
 
 router.delete("/post/delete/:postId", validateToken, deletePost);
 

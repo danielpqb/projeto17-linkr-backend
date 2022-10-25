@@ -85,9 +85,4 @@ async function getUsersWithFilter(req, res) {
   }
 }
 
-export {
-  postSignUpUser,
-  postSignInUser,
-  getUserDataByToken,
-  getUsersWithFilter,
-};
+export { postSignUpUser, postSignInUser, getUserDataByToken, getUsersWithFilter };
