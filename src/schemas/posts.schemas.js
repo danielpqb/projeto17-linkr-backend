@@ -17,5 +17,5 @@ export const createPostsHashtags = joi.object({
 });
 
 export const updatePost = joi.object({
-  text: joi.string().min(0)
-})
+  text: joi.string().min(0),
+});

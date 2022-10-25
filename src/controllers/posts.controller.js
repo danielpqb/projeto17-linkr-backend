@@ -120,8 +120,7 @@ export async function getHashtagPosts(req, res) {
         },
         function (error) {
           posts.rows[i].metadata = {
-            image:
-              "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
+            image: "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
             title: "Erro 400",
             description: "Erro na renderização do link",
           };
@@ -215,8 +214,7 @@ export async function getUserPosts(req, res) {
         },
         function (error) {
           posts.rows[i].metadata = {
-            image:
-              "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
+            image: "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
             title: "Erro 400",
             description: "Erro na renderização do link",
           };

@@ -13,24 +13,15 @@ const validateToken = async (req, res, next) => {
 
   const token = auth.replace("Bearer ", "");
 
-  const session = (
-    await db.query("SELECT * FROM sessions WHERE token=$1;", [token])
-  ).rows[0];
+  const session = (await db.query("SELECT * FROM sessions WHERE token=$1;", [token])).rows[0];
   if (!session) {
     res.status(404).send({ message: "No session for this token." });
     return;
   }
 
-  const user = (
-    await db.query(
-      `SELECT id, name, email, "imageUrl" FROM users WHERE id=$1;`,
-      [session.userId]
-    )
-  ).rows[0];
+  const user = (await db.query(`SELECT id, name, email, "imageUrl" FROM users WHERE id=$1;`, [session.userId])).rows[0];
   if (!user) {
-    res
-      .status(404)
-      .send({ message: "No user for this user_id from sessions." });
+    res.status(404).send({ message: "No user for this user_id from sessions." });
     return;
   }
 
