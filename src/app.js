@@ -1,10 +1,10 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import cors from "cors";
 
-import usersRoute from './routers/users.router.js';
-import postsRoute from './routers/posts.router.js';
-import hashtagsRoute from './routers/hashtags.router.js';
-import likesRouter from './routers/likes.router.js';
+import usersRoute from "./routers/users.router.js";
+import postsRoute from "./routers/posts.router.js";
+import hashtagsRoute from "./routers/hashtags.router.js";
+import likesRouter from "./routers/likes.router.js";
 
 const app = express();
 
