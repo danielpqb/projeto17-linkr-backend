@@ -1,5 +1,5 @@
 import joi from "joi";
-import { regexPatterns } from "../constants/regexPatterns";
+import { regexPatterns } from "../constants/regexPatterns.js";
 
 export const createPost = joi.object({
   userId: joi.number().greater(0).required(),
