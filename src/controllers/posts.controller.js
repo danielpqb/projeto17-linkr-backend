@@ -4,6 +4,7 @@ import urlMetadata from "url-metadata";
 import * as userRepositories from "../repositories/users.repository.js";
 import * as postsRepositories from "../repositories/posts.repository.js";
 import * as hashtagsRepositories from "../repositories/hashtags.repository.js";
+import * as urlsRepositories from "../repositories/urls.repository.js";
 import likesRepository from "../repositories/likes.repository.js";
 
 export async function createPost(req, res) {
@@ -17,17 +18,26 @@ export async function createPost(req, res) {
       return;
     }
 
-    let postId;
-    if (text) {
-      postId = await postsRepositories.createPost({ userId, link, text });
-      res.status(201).send({ message: "Post created.", id: postId });
-      return;
-    }
+    let title, description, image;
 
-    postId = await postsRepositories.createPost({ userId, link });
+    await urlMetadata(link).then(
+      function (metadata) {
+        title = metadata.title;
+        description = metadata.description;
+        image = metadata.image;
+      },
+      function (error) {
+        title = "Erro 400";
+        description = "Erro na renderização do link";
+        image = "https://ps.w.org/broken-link-checker/assets/icon-256x256.png";
+      }
+    );
 
+    const urlId = await urlsRepositories.createUrl({link, title, description, image});
+    const postId = await postsRepositories.createPost({ userId, urlId, text });
     res.status(201).send({ message: "Post created.", id: postId });
     return;
+
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
@@ -38,22 +48,10 @@ export async function getPosts(req, res) {
   try {
     const posts = await postsRepositories.getTimelinePosts();
     for (let i = 0; i < posts.rows.length; i++) {
-      await urlMetadata(posts.rows[i].link).then(
-        function (metadata) {
-          posts.rows[i].metadata = {
-            image: metadata.image,
-            title: metadata.title,
-            description: metadata.description,
-          };
-        },
-        function (error) {
-          posts.rows[i].metadata = {
-            image: "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
-            title: "Erro 400",
-            description: "Erro na renderização do link",
-          };
-        }
-      );
+      
+      const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
+      posts.rows[i].metadata = urlData.rows[0];
+ 
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         id: user.rows[0].id,
