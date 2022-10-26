@@ -61,3 +61,20 @@ export async function deletePost(postId) {
 export async function getPostsByUserId(userId) {
   return db.query(`SELECT * FROM posts WHERE "userId" = $1`, [userId]);
 }
+
+export async function sharePost(userId, postId) {
+  return db.query(`INSERT INTO repost ("reposterUserId", "postId") VALUES ($1, $2)`, [userId, postId]);
+}
+
+export async function getNumberReposts(postId) {
+  return db.query(
+    `
+    SELECT posts.id, COUNT(repost."postId") AS reposts
+    FROM posts
+    LEFT JOIN repost ON posts.id = repost."postId"
+    WHERE posts.id = $1
+    GROUP BY posts.id
+  `,
+    [postId]
+  );
+}

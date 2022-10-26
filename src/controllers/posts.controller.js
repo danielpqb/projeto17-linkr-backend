@@ -213,3 +213,25 @@ export async function getUserPosts(req, res) {
     return;
   }
 }
+
+export async function repost(req, res) {
+  const { userId, postId } = req.body;
+  try {
+    await postsRepositories.sharePost(userId, postId);
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
+export async function getNumberOfReposts(req, res) {
+  const { postId } = req.params;
+  try {
+    const shareNumber = await postsRepositories.getNumberReposts(postId);
+    res.send(shareNumber.rows[0].reposts).status(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}

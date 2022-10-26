@@ -12,6 +12,8 @@ import {
   updatePostsHashtags,
   deletePost,
   getUserPosts,
+  repost,
+  getNumberOfReposts,
 } from "../controllers/posts.controller.js";
 
 import * as schemas from "../schemas/posts.schemas.js";
@@ -28,5 +30,8 @@ router.put("/posts/:id", validateToken, validateSchema(schemas.updatePost), vali
 router.put("/posts/:id/hashtags", validateToken, validateUserPropertyPost, updatePostsHashtags);
 
 router.delete("/post/delete/:postId", validateToken, deletePost);
+
+router.post("/repost", repost);
+router.get("/repost/:postId", getNumberOfReposts);
 
 export default router;
