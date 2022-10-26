@@ -28,8 +28,7 @@ export async function getTimelinePosts() {
 export async function getHashtagFeedPosts(hashtag) {
   return db.query(
     `
-  
-  SELECT posts.id,posts."userId",posts.link,posts.text FROM "postsHashtags"
+  SELECT posts.id,posts."userId",posts."urlId",posts.text FROM "postsHashtags"
   JOIN posts ON posts.id = "postsHashtags"."postId"
   JOIN hashtags ON hashtags.id = "postsHashtags"."hashtagId"
   WHERE hashtags.title = ($1)
