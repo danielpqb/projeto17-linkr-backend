@@ -27,11 +27,15 @@ export async function createPost(req, res) {
         image = metadata.image;
       },
       function (error) {
-        title = "Erro 400";
-        description = "Erro na renderização do link";
-        image = "https://ps.w.org/broken-link-checker/assets/icon-256x256.png";
+        title = "Título não encontrado";
+        description = "Descrição não encontrada";
+        image = "https://juliaja.nl/wp-content/uploads/2021/04/noimagefound24-1024x576.png";
       }
     );
+
+    title = title? title : "Título não encontrado";
+    description = description? description : "Descrição não encontrada";
+    image = image? image : "https://juliaja.nl/wp-content/uploads/2021/04/noimagefound24-1024x576.png";
 
     const urlId = await urlsRepositories.createUrl({link, title, description, image});
     const postId = await postsRepositories.createPost({ userId, urlId, text });
@@ -110,10 +114,10 @@ export async function getHashtagPosts(req, res) {
     const hashtag = req.params.hashtag;
     const posts = await postsRepositories.getHashtagFeedPosts(hashtag);
     for (let i = 0; i < posts.rows.length; i++) {
-
+      
       const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
       posts.rows[i].metadata = urlData.rows[0];
-
+ 
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         id: user.rows[0].id,
@@ -192,22 +196,10 @@ export async function getUserPosts(req, res) {
   try {
     const posts = await postsRepositories.getPostsByUserId(userId);
     for (let i = 0; i < posts.rows.length; i++) {
-      await urlMetadata(posts.rows[i].link).then(
-        function (metadata) {
-          posts.rows[i].metadata = {
-            image: metadata.image,
-            title: metadata.title,
-            description: metadata.description,
-          };
-        },
-        function (error) {
-          posts.rows[i].metadata = {
-            image: "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
-            title: "Erro 400",
-            description: "Erro na renderização do link",
-          };
-        }
-      );
+      
+      const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
+      posts.rows[i].metadata = urlData.rows[0];
+ 
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         id: user.rows[0].id,
@@ -216,29 +208,6 @@ export async function getUserPosts(req, res) {
       };
     }
     return res.status(200).send([posts.rows]);
-  } catch (error) {
-    res.status(500).send({ error: error.message });
-    return;
-  }
-}
-
-export async function getPostDataById(req, res) {
-  const { id } = req.params;
-  console.log(id);
-
-  try {
-    const post = await postsRepositories.getPostById(id);
-    console.log(post);
-    if (post.rowCount <= 0) {
-      res.status(404).send({ message: "Post could not be found." });
-      return;
-    }
-
-    res.status(200).send({
-      message: `Post data found.`,
-      postData: post.rows[0],
-    });
-    return;
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
