@@ -44,7 +44,7 @@ export async function getHashtags(req, res) {
     return;
   }
 }
-
+ 
 export async function getTrendingHashtags(req, res) {
   try {
     const hashtags = await hashtagsRepositories.getRankingHashtags();
