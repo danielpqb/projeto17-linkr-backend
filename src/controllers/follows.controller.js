@@ -1,5 +1,19 @@
 import * as followRepositories from "../repositories/follows.repository.js";
 
+export async function isFollowed(req, res) {
+    const { follower, followed } = res.locals;
+    try {
+        const notFollow = await followRepositories.getFollow(follower,followed);
+        if (notFollow.rowCount === 0){
+            res.send(false);
+            return;
+        }
+        res.send(true);
+    } catch (error) {
+        res.sendStatus(500);
+    }
+}
+
 export async function createFollow(req, res) {
     const { follower, followed } = res.locals;
     try {
