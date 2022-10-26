@@ -110,22 +110,10 @@ export async function getHashtagPosts(req, res) {
     const hashtag = req.params.hashtag;
     const posts = await postsRepositories.getHashtagFeedPosts(hashtag);
     for (let i = 0; i < posts.rows.length; i++) {
-      await urlMetadata(posts.rows[i].link).then(
-        function (metadata) {
-          posts.rows[i].metadata = {
-            image: metadata.image,
-            title: metadata.title,
-            description: metadata.description,
-          };
-        },
-        function (error) {
-          posts.rows[i].metadata = {
-            image: "https://ps.w.org/broken-link-checker/assets/icon-256x256.png",
-            title: "Erro 400",
-            description: "Erro na renderização do link",
-          };
-        }
-      );
+
+      const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
+      posts.rows[i].metadata = urlData.rows[0];
+
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         id: user.rows[0].id,

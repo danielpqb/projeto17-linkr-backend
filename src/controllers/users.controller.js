@@ -73,7 +73,7 @@ async function getUsersWithFilter(req, res) {
   if (!req.headers.filter) {
     res.sendStatus(400);
     return;
-  }
+  } 
 
   try {
     const filter = stripHtml(req.headers.filter).result;
