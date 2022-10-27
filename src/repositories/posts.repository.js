@@ -22,7 +22,7 @@ export async function getAllPosts() {
 }
 
 export async function getTimelinePosts() {
-  return db.query(`SELECT * FROM posts ORDER BY id DESC LIMIT 20;`);
+  return db.query(`SELECT * FROM posts ORDER BY id DESC;`) ;
 }
 
 export async function getHashtagFeedPosts(hashtag) {
