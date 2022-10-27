@@ -21,8 +21,14 @@ export async function getAllPosts() {
   return db.query(`SELECT * FROM posts`);
 }
 
-export async function getTimelinePosts() {
-  return db.query(`SELECT * FROM posts ORDER BY id DESC;`) ;
+export async function getTimelinePosts(id) {
+  return db.query(`
+  SELECT posts.* FROM posts
+  JOIN follows ON posts."userId" = follows."followedId"
+  WHERE follows."followerId" = $1
+  ORDER BY id DESC;`,
+  [id]
+  ) ;
 }
 
 export async function getHashtagFeedPosts(hashtag) {
@@ -32,7 +38,7 @@ export async function getHashtagFeedPosts(hashtag) {
   JOIN posts ON posts.id = "postsHashtags"."postId"
   JOIN hashtags ON hashtags.id = "postsHashtags"."hashtagId"
   WHERE hashtags.title = ($1)
-  ORDER BY posts.id DESC LIMIT 20;`,
+  ORDER BY posts.id DESC;`,
     [hashtag]
   );
 }

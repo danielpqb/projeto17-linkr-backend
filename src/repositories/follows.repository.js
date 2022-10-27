@@ -30,3 +30,11 @@ export async function deleteFollow(follower, followed){
         [follower, followed]    
     )
 }
+
+export async function getUserFollows(id){
+    return db.query(`
+        SELECT * FROM follows
+        WHERE "followerId" = $1;`,
+        [id]    
+    )
+}
