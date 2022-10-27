@@ -5,6 +5,7 @@ import usersRoute from "./routers/users.router.js";
 import postsRoute from "./routers/posts.router.js";
 import hashtagsRoute from "./routers/hashtags.router.js";
 import likesRouter from "./routers/likes.router.js";
+import followsRouter from "./routers/follows.router.js";
 
 const app = express();
 
@@ -15,5 +16,6 @@ app.use(usersRoute);
 app.use(postsRoute);
 app.use(hashtagsRoute);
 app.use(likesRouter);
+app.use(followsRouter);
 
 export default app;
