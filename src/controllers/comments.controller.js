@@ -6,11 +6,11 @@ async function getCommentsDataByPostId(req, res) {
   try {
     const comments = await repositories.getCommentsDataByPostId(postId);
     if (comments.rowCount <= 0) {
-      res.status(404).send({ message: "No comments found." });
+      res.status(204).send({ message: "No comments found." });
       return;
     }
 
-    res.status(200).send({ message: "Comments data found.", commentsData: comments });
+    res.status(200).send({ message: "Comments data found.", commentsData: comments.rows });
     return;
   } catch (error) {
     console.error(error);
@@ -19,6 +19,19 @@ async function getCommentsDataByPostId(req, res) {
   }
 }
 
-async function postComment(req, res) {}
+async function postNewComment(req, res) {
+  const { user } = res.locals;
+  const { postId, text } = req.body;
 
-export { getCommentsDataByPostId, postComment };
+  try {
+    await repositories.postNewComment(user.id, postId, text);
+    res.status(201).send({ message: "Comment created." });
+    return;
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+    return;
+  }
+}
+
+export { getCommentsDataByPostId, postNewComment };
