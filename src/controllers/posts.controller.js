@@ -50,7 +50,7 @@ export async function createPost(req, res) {
 
 export async function getPosts(req, res) {
   try {
-    const posts = await postsRepositories.getTimelinePosts();
+    const posts = await postsRepositories.getTimelinePosts(res.locals.user.id);
     for (let i = 0; i < posts.rows.length; i++) {
       
       const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
