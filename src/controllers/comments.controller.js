@@ -1,10 +1,10 @@
 import * as repositories from "../repositories/comments.repository.js";
 
-async function getCommentsDataByPostId(req, res) {
-  const { postId } = req.params;
+async function getCommentsDataByPostId_checkIfAUserFollowsWhoCommented(req, res) {
+  const { postId, userId } = req.params;
 
   try {
-    const comments = await repositories.getCommentsDataByPostId(postId);
+    const comments = await repositories.getCommentsDataByPostId_checkIfAUserFollowsWhoCommented(postId, userId);
     if (comments.rowCount <= 0) {
       res.status(204).send({ message: "No comments found." });
       return;
@@ -34,4 +34,4 @@ async function postNewComment(req, res) {
   }
 }
 
-export { getCommentsDataByPostId, postNewComment };
+export { getCommentsDataByPostId_checkIfAUserFollowsWhoCommented, postNewComment };
