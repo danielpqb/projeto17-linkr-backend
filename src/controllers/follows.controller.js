@@ -43,3 +43,16 @@ export async function deleteFollow(req, res) {
         res.sendStatus(500);
     }
 }
+
+export async function allUserFollows(req, res) {
+    try {
+        const follows = await followRepositories.getUserFollows(res.locals.user.id);
+        if (follows.rowCount === 0){
+            return res.status(200).send(false);
+        }else{
+            return res.status(200).send(true);
+        }
+    } catch (error) {
+        return res.sendStatus(500);
+    }
+}
