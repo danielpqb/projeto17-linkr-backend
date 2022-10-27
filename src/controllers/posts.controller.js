@@ -33,15 +33,14 @@ export async function createPost(req, res) {
       }
     );
 
-    title = title? title : "Título não encontrado";
-    description = description? description : "Descrição não encontrada";
-    image = image? image : "https://juliaja.nl/wp-content/uploads/2021/04/noimagefound24-1024x576.png";
+    title = title ? title : "Título não encontrado";
+    description = description ? description : "Descrição não encontrada";
+    image = image ? image : "https://juliaja.nl/wp-content/uploads/2021/04/noimagefound24-1024x576.png";
 
-    const urlId = await urlsRepositories.createUrl({link, title, description, image});
+    const urlId = await urlsRepositories.createUrl({ link, title, description, image });
     const postId = await postsRepositories.createPost({ userId, urlId, text });
     res.status(201).send({ message: "Post created.", id: postId });
     return;
-
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
@@ -52,10 +51,9 @@ export async function getPosts(req, res) {
   try {
     const posts = await postsRepositories.getTimelinePosts();
     for (let i = 0; i < posts.rows.length; i++) {
-      
       const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
       posts.rows[i].metadata = urlData.rows[0];
- 
+
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         id: user.rows[0].id,
@@ -114,10 +112,9 @@ export async function getHashtagPosts(req, res) {
     const hashtag = req.params.hashtag;
     const posts = await postsRepositories.getHashtagFeedPosts(hashtag);
     for (let i = 0; i < posts.rows.length; i++) {
-      
       const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
       posts.rows[i].metadata = urlData.rows[0];
- 
+
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         id: user.rows[0].id,
@@ -196,10 +193,9 @@ export async function getUserPosts(req, res) {
   try {
     const posts = await postsRepositories.getPostsByUserId(userId);
     for (let i = 0; i < posts.rows.length; i++) {
-      
       const urlData = await urlsRepositories.getUrl(posts.rows[i].urlId);
       posts.rows[i].metadata = urlData.rows[0];
- 
+
       const user = await userRepositories.getUserById(posts.rows[i].userId);
       posts.rows[i].user = {
         id: user.rows[0].id,
@@ -211,5 +207,32 @@ export async function getUserPosts(req, res) {
   } catch (error) {
     res.status(500).send({ error: error.message });
     return;
+  }
+}
+
+export async function repost(req, res) {
+  const { userId, postId } = req.body;
+  try {
+    await postsRepositories.sharePost(userId, postId);
+    return res.sendStatus(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+}
+
+export async function getNumberOfReposts(req, res) {
+  const { postId } = req.params;
+  try {
+    const shareNumber = await postsRepositories.getNumberReposts(postId);
+
+    if (shareNumber.rowCount === 0) {
+      return res.send("0");
+    }
+
+    res.send(shareNumber.rows[0].reposts).status(200);
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
   }
 }
