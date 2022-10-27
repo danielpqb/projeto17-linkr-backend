@@ -76,7 +76,8 @@ async function getUsersWithFilter(req, res) {
 
   try {
     const filter = stripHtml(req.headers.filter).result;
-    const users = await repositories.getUsersWithFilter(filter);
+    const userId = res.locals.user.id
+    const users = await repositories.getUsersWithFilter(userId, filter);
     res.send(users.rows);
   } catch (error) {
     res.sendStatus(500);
