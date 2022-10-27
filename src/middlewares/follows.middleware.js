@@ -9,10 +9,11 @@ async function validateIds(req,res,next) {
         return;
     }
 
-    if (follower === followed){
-        res.status(400).send({message: 'you cannot follow/unfollow yourself'});
+    /*if (follower === followed){
+        res.status(404).send({message: 'you cannot follow/unfollow yourself'});
         return;
-    }
+    }*/
+
 
     try {
         const checkUser = await userRepositories.getUserById(followed);
