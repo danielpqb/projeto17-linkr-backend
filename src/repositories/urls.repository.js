@@ -15,7 +15,7 @@ export async function createUrl({ link, title, description, image }) {
 
   export async function getUrl(id) {
     return db.query(
-      `SELECT title, description, image
+      `SELECT title, description, image, link
       FROM urls WHERE id = $1;`,
       [id]);
   }

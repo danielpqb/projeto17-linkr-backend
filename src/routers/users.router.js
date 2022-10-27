@@ -5,6 +5,7 @@ import {
   postSignInUser,
   getUserDataByToken,
   getUsersWithFilter,
+  getUserById,
 } from "../controllers/users.controller.js";
 
 import { validateSchema } from "../middlewares/validateSchema.middleware.js";
@@ -21,5 +22,7 @@ router.post("/signin", validateSchema(schemas.postSignInUser), postSignInUser);
 router.get("/users/me", validateToken, getUserDataByToken);
 
 router.get("/searchUsers", validateToken, validateSchema(schemas.searchUser), getUsersWithFilter);
+
+router.get("/user/:id", validateToken, getUserById )
 
 export default router;
