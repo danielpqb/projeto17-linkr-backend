@@ -21,8 +21,29 @@ async function createSession(userId, token) {
   db.query(`INSERT INTO sessions("userId", token) VALUES ($1, $2);`, [userId, token]);
 }
 
-async function getUsersWithFilter(filter) {
-  return db.query(`SELECT id, name, "imageUrl" FROM users WHERE name ILIKE $1;`, [filter + "%"]);
+async function getUsersWithFilter(userId, filter) {
+  return db.query(`
+  SELECT
+	id,
+	name,
+	"imageUrl",
+	CASE 
+		WHEN users.id = $1
+		THEN TRUE
+		ELSE FALSE
+	END AS "me",
+	CASE 
+		WHEN EXISTS (SELECT * FROM follows WHERE "followerId" = $1 AND "followedId" = users.id)
+		THEN TRUE
+		ELSE FALSE
+	END AS "followed"
+	FROM users
+	WHERE
+		name ILIKE $2
+	ORDER BY
+		me DESC,
+		followed DESC,
+		name;`, [userId, (filter + "%")]);
 }
 
 export { getUserByEmail, createUser, createSession, getUserById, getUsersWithFilter };
