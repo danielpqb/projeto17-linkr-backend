@@ -238,42 +238,11 @@ export async function getNumberOfReposts(req, res) {
 }
 
 export async function getReposts(req, res) {
-  const { postId } = req.params;
-  console.log(postId);
-
   try {
-    const repostData = (await postsRepositories.getRepostData(postId)).rows;
+    const repostData = (await postsRepositories.getRepostData()).rows;
     res.send(repostData);
   } catch (error) {
     console.log(error);
-    return res.send("não funcionou");
+    return res.sendStatus(500);
   }
-}
-
-function formatRepostData(
-  userId,
-  username,
-  reposterName,
-  userImage,
-  likes,
-  postId,
-  postText,
-  link,
-  urlTitle,
-  urlDescription,
-  urlImage
-) {
-  return {
-    userId: userId,
-    username: username,
-    reposterName: reposterName,
-    userImage: userImage,
-    likes: likes,
-    postId: postId,
-    postText: postText,
-    link: link,
-    urlTitle: urlTitle,
-    urlDescription: urlDescription,
-    urlImage: urlImage,
-  };
 }

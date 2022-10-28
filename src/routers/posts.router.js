@@ -35,6 +35,6 @@ router.delete("/post/delete/:postId", validateToken, deletePost);
 router.post("/repost", repost);
 router.get("/repost/:postId", getNumberOfReposts);
 router.get("/all-reposts/", getReposts);
-router.get("/repostdata/:postId", getReposts);
+router.get("/repostdata", getReposts);
 
 export default router;

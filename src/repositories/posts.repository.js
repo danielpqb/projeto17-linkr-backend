@@ -79,31 +79,29 @@ export async function getNumberReposts(postId) {
   );
 }
 
-export async function getRepostData(postId) {
+export async function getRepostData() {
   return db.query(
     `
-  SELECT
-	posts.id AS "postId",
-	"userId",
-	users.name,
-	text AS "postText",
-	CASE 
-		WHEN EXISTS (SELECT * FROM repost WHERE "postId" = $1)
-		THEN (SELECT repost."reposterUserId" FROM repost WHERE "postId"= $1 LIMIT 1)
-	END AS "reposterId",
-	users."imageUrl",
-	urls.link,
-	urls.title,
-	urls.description,
-	urls.image AS "postImage",
-	CASE
-		WHEN EXISTS (SELECT * FROM likes WHERE "postId" = $1)
-		THEN (SELECT COUNT(*) FROM likes WHERE "postId" = $1 GROUP BY "postId")
-	END AS "likes"
-FROM posts
-JOIN users ON posts."userId" = users.id
-JOIN urls ON posts."urlId" = urls.id
-WHERE posts.id = $1`,
-    [postId]
+    SELECT
+    posts.id AS "postId",
+    "userId",
+    users.name,
+    text AS "postText",
+    CASE 
+      WHEN EXISTS (SELECT * FROM repost WHERE "postId" = posts.id)
+      THEN (SELECT repost."reposterUserId" FROM repost WHERE "postId"= posts.id LIMIT 1)
+    END AS "reposterId",
+    users."imageUrl",
+    urls.link,
+    urls.title,
+    urls.description,
+    urls.image,
+    CASE
+      WHEN EXISTS (SELECT * FROM likes WHERE "postId" = posts.id)
+      THEN (SELECT COUNT(*) FROM likes WHERE "postId" = posts.id GROUP BY "postId")
+    END AS "likes"
+    FROM posts
+    JOIN users ON posts."userId" = users.id
+    JOIN urls ON posts."urlId" = urls.id;`
   );
 }
