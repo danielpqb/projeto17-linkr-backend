@@ -14,6 +14,7 @@ import {
   getUserPosts,
   repost,
   getNumberOfReposts,
+  getReposts,
 } from "../controllers/posts.controller.js";
 
 import * as schemas from "../schemas/posts.schemas.js";
@@ -33,5 +34,7 @@ router.delete("/post/delete/:postId", validateToken, deletePost);
 
 router.post("/repost", repost);
 router.get("/repost/:postId", getNumberOfReposts);
+router.get("/all-reposts/", getReposts);
+router.get("/repostdata/:postId", getReposts);
 
 export default router;
