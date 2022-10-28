@@ -76,11 +76,33 @@ async function getUsersWithFilter(req, res) {
 
   try {
     const filter = stripHtml(req.headers.filter).result;
-    const users = await repositories.getUsersWithFilter(filter);
+    const userId = res.locals.user.id
+    const users = await repositories.getUsersWithFilter(userId, filter);
     res.send(users.rows);
   } catch (error) {
     res.sendStatus(500);
   }
 }
 
-export { postSignUpUser, postSignInUser, getUserDataByToken, getUsersWithFilter };
+async function getUserById(req, res) {
+
+  const { id } = req.params;
+
+  if(!id || isNaN(Number(id))){
+    res.status(400).send({message: "invalid id"});
+    return
+  }
+
+  try {
+    const user = (await repositories.getUserById(id)).rows[0];
+    if (!user){
+      res.status(404).send({message: "id not found"});
+      return
+    }
+    res.send(user);
+  } catch (error) {
+    res.sendStatus(500);
+  }
+}
+
+export { postSignUpUser, postSignInUser, getUserDataByToken, getUsersWithFilter, getUserById };
